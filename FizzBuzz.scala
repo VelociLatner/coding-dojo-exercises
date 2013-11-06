@@ -15,9 +15,9 @@ class FizzBuzz extends FlatSpec with ShouldMatchers{
 
     def running(value: Int) = {
       val applicableRules = rules filter(_.isDefinedAt(value))
-      applicableRules map( _ apply value ) match {
+      applicableRules match {
         case Nil => value.toString
-        case x => x.mkString(" ")
+        case x => x map( _ apply value) mkString(" ")
       }
     }
   }
