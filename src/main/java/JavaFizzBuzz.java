@@ -2,7 +2,7 @@ import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 
 // Fizz Buzz implemented without "if" statements.
-public class FizzBuzz {
+public class JavaFizzBuzz {
 
     private interface Speakable {
         public String speak();
