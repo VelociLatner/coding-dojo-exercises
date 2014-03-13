@@ -85,3 +85,5 @@ class NumberConverter(trailingDigits: Int, decorator: String, nextConverter: Num
   }
 
 }
+
+
