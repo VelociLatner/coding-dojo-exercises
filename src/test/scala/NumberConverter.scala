@@ -44,11 +44,26 @@ class NumberConverter extends FlatSpec with Matchers {
   }
 
 
-  case object NumberConverter extends (Long => String) {
+  object NumberConverter extends (Long => String) {
+    val NULL_CONVERTER = new NumberConverter(0, null, null) {
+      override def convert(x: String) = ""
+    }
+
+    private val BaseConverter = new NumberConverter(0, "", NumberConverter.NULL_CONVERTER)
+    private val Thousands = new NumberConverter(3, "thousand", BaseConverter)
+    private val Millions = new NumberConverter(6, "million", Thousands)
+    private val Billions = new NumberConverter(9, "billion", Millions)
+    private val Trillions = new NumberConverter(12, "trillion", Billions)
+    private val Quadrillions = new NumberConverter(15, "quadrillion", Trillions)
+    private val Quintillions = new NumberConverter(18, "quintillion", Quadrillions)
+    private val Sextillions = new NumberConverter(21, "sextillion", Quintillions)
+    private val Septillions = new NumberConverter(24, "septillion", Sextillions)
+    // If we're looking at numbers bigger than this, we have other problems.
+
     def apply(value: Long) = Septillions.convert(value.toString).trim
   }
 
-  private sealed abstract class NumberConverter(trailingDigits: Int, decorator: String, nextConverter: NumberConverter) {
+  private class NumberConverter(trailingDigits: Int, decorator: String, nextConverter: NumberConverter) {
 
     def convert(value: String): String = {
       (
@@ -112,21 +127,23 @@ class NumberConverter extends FlatSpec with Matchers {
         else
           convertTens(input.takeRight(2))
     }
+
   }
 
-  private case object NullConverter extends NumberConverter(0, "", null) {
-    override def convert(value: String) = ""
+
+  object Sections extends Enumeration {
+    val ones, hundreds, thousands, millions, billions = Value
   }
 
-  private case object BaseConverter extends NumberConverter(0, "", NullConverter)
-  private case object Thousands extends NumberConverter(3, "thousand", BaseConverter)
-  private case object Millions extends NumberConverter(6, "million", Thousands)
-  private case object Billions extends NumberConverter(9, "billion", Millions)
-  private case object Trillions extends NumberConverter(12, "trillion", Billions)
-  private case object Quadrillions extends NumberConverter(15, "quadrillion", Trillions)
-  private case object Quintillions extends NumberConverter(18, "quintillion", Quadrillions)
-  private case object Sextillions extends NumberConverter(21, "sextillion", Quintillions)
-  private case object Septillions extends NumberConverter(24, "septillion", Sextillions)
-  // If we're looking at numbers bigger than this, we have other problems.
+  def convertHundreds = BaseConverter.convert _
+  val input = "12345678"
+
+  def func(input: String) = {
+    val remainder = input.length % 3
+    val trailingSections = (input.length - remainder) / 3
+    for (section <- 1 to trailingSections + (if (remainder != 0) 1 else 0)) {
+      convertHundreds(substring) + Sections(section)
+    }
+  }
 
 }
