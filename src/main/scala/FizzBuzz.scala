@@ -14,10 +14,10 @@ class FizzBuzz extends FlatSpec with ShouldMatchers{
   class GameRunner(rules: GameRule*) {
 
     def running(value: Int) = {
-      val applicableRules = rules filter(_.isDefinedAt(value))
-      applicableRules match {
+      val appliedRules = rules filter ( _ isDefinedAt value ) map ( _ apply value )
+      appliedRules match {
         case Nil => value.toString
-        case x => x map( _ apply value) mkString(" ")
+        case x => x.mkString(" ")
       }
     }
   }
